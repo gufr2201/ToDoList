@@ -29,6 +29,16 @@ app.get('/api/get', (req, res) => {
     const sqlGet = "SELECT * FROM todo";
     db.query(sqlGet, (error, result) => {
         res.send(result);
+    });
+});
+
+app.post('/api/post', (req, res) => {
+    const {todo} = req.body;
+    const sqlInsert = "INSERT INTO todo (todo) VALUES (?)";
+    db.query(sqlInsert, [todo], (error, result) => {
+        if (error) {
+            console.log(error);
+        }
     })
 })
 

@@ -15,6 +15,9 @@ const Home = () => {
     }, []);
     return (
         <div style={{marginTop: "150px"}}>
+        <Link to="addTodo">
+        <button className='btn btn-todo'>Lägg till att göra</button>
+        </Link>
         <table className="styled-table">
             <thead>
                 <tr>

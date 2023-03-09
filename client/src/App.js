@@ -3,6 +3,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Home from './pages/Home';
+import AddEdit from './pages/AddEdit';
 function App() {
   return (
     <BrowserRouter>
@@ -11,7 +12,8 @@ function App() {
       
        <Routes>
         <Route exact path="/" element={<Home/>}/>
-       
+        <Route path="/addTodo" element={<AddEdit/>}/>
+      
        </Routes>
       </div>
     </BrowserRouter>
