@@ -1,12 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
-import { ToastContainer, toast } from 'react-toastify';
+import './App.scss';
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Home from './pages/Home';
 function App() {
   return (
-    <div className="App">
-     <h2>Hello React</h2>
-    </div>
+    <BrowserRouter>
+      <div className="App">
+       <ToastContainer position='top-center'/>
+      
+       <Routes>
+        <Route exact path="/" element={<Home/>}/>
+       
+       </Routes>
+      </div>
+    </BrowserRouter>
+   
   );
 }
 

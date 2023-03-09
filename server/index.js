@@ -32,7 +32,7 @@ app.get('/api/get', (req, res) => {
     })
 })
 
-app.get('/', (req, res) => {
+app.post('/', (req, res) => {
     // const sqlInsert = 
     // "INSERT INTO todo (todo) VALUES ('clean')";
 
