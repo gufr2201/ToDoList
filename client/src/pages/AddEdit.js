@@ -5,34 +5,80 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const initialState = {
-    todo: ''
-}
+    todo_task: ''
+};
 
 const AddEdit = () => {
     const [state, setState] = useState(initialState);
-
-    const {todo} = state;
+    
+    const {todo_task} = state;
 
     const navigate = useNavigate();
 
+    const { id } = useParams();
+
+    // useEffect(() => {
+    //     axios.patch(`http://localhost:5000/api/patch/update:${id}`).then((res) => setState({ ...res.data[0] }))
+    // }, [id]);
+    useEffect(() => {
+        if (id) {
+          axios.get(`http://localhost:5000/api/get/${id}`)
+            .then(res => setState({ ...res.data[0] })) 
+            .catch(err => console.log(err));
+        }
+      }, [id]);
+      
+
+
+    //TEST NEDAN
+    // class NameForm extends React.Component {
+    //     constructor(props) {
+    //         super(props);
+    //         this.state = {value: ''};
+    
+    //         this.handleInputChange = this.handleInputChange.bind(this);
+    //         this.handleSubmit = this.handleSubmit.bind(this);
+    
+    //     }
+
+    // };
+
+    
+    //TEST OVAN
     const handleSubmit = (e) => {
         e.preventDefault();
-        if(!todo) {
+        if(!todo_task) {
             toast.error('Var snäll och fyll i fältet innan du sparar.')
         }
         else{
+            //Om aktiviteten inte har id är det en ny aktivitet som skapas.
+           if (!id) { 
             axios.post('http://localhost:5000/api/post', {
-                todo
+                todo_task
             }).then(() => {
-                setState({todo: ''});
-            }).catch((err) => toast.error(err.response.data));
-            setTimeout(() => navigate.push('/'), 500);
+                setState({todo_task: ''});
+            })
+            .catch((err) => toast.error(err.response.data));
+            toast.success('Du har lagt till något att göra!');
+        } else {
+            //Om aktiviteten har ett id så uppdateras den.
+            axios.patch(`http://localhost:5000/api/update/${id}`, { todo_task })
+    .then(() => {
+        setState({todo_task: ''});
+    })
+    .catch((err) => toast.error(err.response.data));
+    toast.success('Du har nu uppdaterat aktiviteten');
+ 
+                  }
+        
+}
+            setTimeout(() => navigate('/'), 500);
         }
-    };
+    // };
 
     const handleInputChange = (e) => {
-        const {todo, value} = e.target;
-        setState({...state, [todo]: value });
+        const {name, value} = e.target;
+        setState({...state, [name]: value });
     }; 
 
     return (
@@ -46,25 +92,27 @@ const AddEdit = () => {
         onSubmit={handleSubmit}
         >
             
-            <label htmlFor='todo'>Att göra</label>
+            <label htmlFor='todo_task'>Att göra</label>
             <input 
             type='text' 
-            id='todo' 
-            name='todo' 
+            id='todo_task' 
+            name='todo_task' 
             placeholder='Vad har du att göra?'
             // defaultValue={todo} 
-            value={todo || ''}
-            onChange={(e) => handleInputChange(e.target.value)} 
+            //value gör att det inte går att skriva i textrutan. defalultValue går att skriva men tolkas som att inget skrivits och felmeddelande om att man måste fylla i rutan kommer upp
+            value={todo_task || ''}
+            onChange={handleInputChange} 
             />
         
-            <input type='submit' value='Spara' />
+            <input type='submit' value={id ? 'Uppdatera' : 'Spara'} />
               <Link to='/'>
                 <input type='button' value='Gå tillbaka'/>
               </Link>      
 
         </form>
         </div>
-    )
-}
+    );
+    
+    };
 
 export default AddEdit;

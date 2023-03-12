@@ -4,8 +4,10 @@ import {Link} from 'react-router-dom';
 import './styles/Home.component.scss';
 import {toast} from 'react';
 import axios from 'axios';
+
 const Home = () => {
     const [data, setData] = useState([]);
+    
     const loadData = async () => {
         const response = await axios.get('http://localhost:5000/api/get');
         setData(response.data);
@@ -13,6 +15,20 @@ const Home = () => {
     useEffect(() => {
         loadData();
     }, []);
+
+    // const navigate = useNavigate();
+
+
+    const deleteTodo = (id) => {
+        if(
+            window.confirm('Är du säker på att du vill ta bort aktiviteten?')
+            ) {
+            axios.delete(`http://localhost:5000/api/remove/${id}`);
+            toast.success('Aktivitet togs bort');
+            setTimeout(() => loadData(), 500);
+        }
+    };
+
     return (
         <div style={{marginTop: "150px"}}>
         <Link to="addTodo">
@@ -31,12 +47,12 @@ const Home = () => {
                     return (
                         <tr key={item.id}>
                             <th scope="row">{index+1}</th>
-                            <td>{item.todo}</td>
+                            <td>{item.todo_task}</td>
                             <td>
                                 <Link to={`/update/${item.id}`}>
                                     <button className='btn btn-edit'>Redigera</button>
                                 </Link>
-                                <button className="btn btn-delete">Ta bort</button>
+                                <button className="btn btn-delete" onClick={() => deleteTodo(item.id)}>Ta bort</button>
                                 <Link to={`/view/${item.id}`}>
                                     <button className='btn btn-view'>Visa</button>
                                 </Link>
