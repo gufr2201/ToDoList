@@ -105,7 +105,7 @@ const AddEdit = () => {
             />
         
             <input type='submit' value={id ? 'Uppdatera' : 'Spara'} />
-              <Link to='/'>
+              <Link to='/addTodo'>
                 <input type='button' value='Gå tillbaka'/>
               </Link>      
 

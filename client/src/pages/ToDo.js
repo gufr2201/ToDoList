@@ -1,11 +1,11 @@
 // import Home from './styles/Home.component.scss'
 import React, {useState, useEffect} from 'react'
 import {Link} from 'react-router-dom';
-import './styles/Home.component.scss';
+import './styles/ToDo.component.scss';
 import {toast} from 'react';
 import axios from 'axios';
 
-const Home = () => {
+const ToDo = () => {
     const [data, setData] = useState([]);
     
     const loadData = async () => {
@@ -31,7 +31,7 @@ const Home = () => {
 
     return (
         <div style={{marginTop: "150px"}}>
-        <Link to="addTodo">
+        <Link to="/addTodo">
         <button className='btn btn-todo'>Lägg till att göra</button>
         </Link>
         <table className="styled-table">
@@ -66,4 +66,4 @@ const Home = () => {
     )
 }
 
-export default Home;
+export default ToDo;

@@ -1,6 +1,6 @@
 const express = require('express');
 require('dotenv').config();
-const app = express();
+const server = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mysql = require('mysql2');
@@ -12,31 +12,58 @@ const db = mysql.createPool({
     host: process.env.DATABASE_HOST,
     database: process.env.DATABASE_DATABASE
 });
-// Nedan kod ska in i env
-// const db = mysql.createPool({
-//     host: "localhost",
-//     user: "root",
-//     password: "superhemligt",
-//     database: "todo_list"
-// });
-//ovan kod är inte säker och ska bort
 
-app.use(cors());
-app.use(express.json());
-app.use(bodyParser.urlencoded({extended: true}));
+
+server.use(cors());
+server.use(express.json());
+server.use(bodyParser.urlencoded({extended: true}));
 
 
 
+// server.get('/api/get', (req, res) => {
+//         const schema = joi.object({
+//         todo_task: joi.string()
+//     });
+//     const validation = schema.validate(req.query);
 
+//     if (validation.error) {
+//         res.status(400).send(validation.error.details[0].message)
+//     }
+//     const {todo_task} = validation.value;
+//     const sqlGet ='SELECT * FROM todo where todo_task=?'; 
+//     db.query(sqlGet, [todo_task], (error, result) => {
+//         if(error){
+//             res.sendStatus(500);
+//             console.log(error);
+//         } else {
+//             res.status(200).json(result);
+//             console.log(result);
 
-app.get('/api/get', (req, res) => {
+//         }
+//     })
+// })
+
+server.get('/api/get', (req, res) => {
+
+    const schema = joi.object({
+        todo_task: joi.string()
+    });
+
+    const validation = schema.validate(req.query);
+
     const sqlGet = "SELECT * FROM todo";
     db.query(sqlGet, (error, result) => {
-        res.send(result);
-    });
+        if(validation.error) {
+            console.log(error);
+            res.sendStatus(500);
+            //TODO skriv res.sendStatus(500 eller den felkod som gäller)
+        }else {
+        res.status(200).json(result); // ändrade från res.send(result) till res.json(result);
+        }
+    })
 });
 
-app.post('/api/post', (req, res) => {
+server.post('/api/post', (req, res) => {
     const {todo_task} = req.body;
     const sqlInsert = "INSERT INTO todo (todo_task) VALUES (?)";
     db.query(sqlInsert, [todo_task], (error, result) => {
@@ -46,17 +73,18 @@ app.post('/api/post', (req, res) => {
     });
 });
 
-app.delete('/api/remove/:id', (req, res) => {
+server.delete('/api/remove/:id', (req, res) => {
     const { id } = req.params;
     const sqlRemove = "DELETE FROM todo WHERE id = ?";
     db.query(sqlRemove, [id], (error, result) => {
         if (error) {
             console.log(error);
         }
+        //TODO Här border det vara en res.sendStatus(200 eller något). Kör detta på varje del
     });
 });
 
-app.get('/api/get:id', (req, res) => {
+server.get('/api/get:id', (req, res) => {
     const { id } = req.params;
     const sqlGet = "SELECT * FROM todo where id = ?";
     db.query(sqlGet, [id], (error, result) => {
@@ -67,7 +95,7 @@ app.get('/api/get:id', (req, res) => {
     });
 });
 
-app.patch('/api/update/:id', (req, res) => {
+server.patch('/api/update/:id', (req, res) => {
     const { id } = req.params;
     const { todo_task } = req.body;
     const sqlUpdate = "UPDATE todo SET todo_task = ? WHERE id = ?";
@@ -80,17 +108,8 @@ app.patch('/api/update/:id', (req, res) => {
 });
 
 
-// app.post('/', (req, res) => {
-//     // const sqlInsert = 
-//     // "INSERT INTO todo (todo) VALUES ('clean')";
 
-//     // db.query(sqlInsert, (error, result) => {
-//     //     console.log('error', error);
-//     //     console.log('result', result)
-//     //     res.send('Hello express');
-//     // });
-// });
 
-app.listen(5000, () => {
+server.listen(5000, () => {
     console.log('Server is running on port 5000');
 })
