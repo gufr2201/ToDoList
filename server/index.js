@@ -5,6 +5,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mysql = require('mysql2');
 const joi = require('joi');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+const { AuthenticationRoute } = require('../client/src/pages/routes/AuthenticationRoute');
 //Här hämtar jag info från .env-filen för att skapa en anslutning till databasen
 const db = mysql.createPool({
     user: process.env.DATABASE_USER,
@@ -14,10 +17,26 @@ const db = mysql.createPool({
 });
 
 
-server.use(cors());
+server.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true}
+));
 server.use(express.json());
 server.use(bodyParser.urlencoded({extended: true}));
+server.use(cookieParser());
 
+server.use('/authentication', AuthenticationRoute);
+
+
+server.post('/api/post', (req, res) => {
+    const {todo_task} = req.body;
+    const sqlInsert = "INSERT INTO todo (todo_task) VALUES (?)";
+    db.query(sqlInsert, [todo_task], (error, result) => {
+        if (error) {
+            console.log(error);
+        }
+    });
+});
 
 
 // server.get('/api/get', (req, res) => {
@@ -44,13 +63,14 @@ server.use(bodyParser.urlencoded({extended: true}));
 // })
 
 server.get('/api/get', (req, res) => {
-
+    const {authToken} = req.cookies;
     const schema = joi.object({
         todo_task: joi.string()
     });
-
+console.log(authToken);
+console.log(req)
     const validation = schema.validate(req.query);
-
+//kolla om jag kan göra en middleware som kontrollerar om användaren har en authToken för att logga in. 
     const sqlGet = "SELECT * FROM todo";
     db.query(sqlGet, (error, result) => {
         if(validation.error) {

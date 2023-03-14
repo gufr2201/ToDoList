@@ -29,22 +29,6 @@ const AddEdit = () => {
       }, [id]);
       
 
-
-    //TEST NEDAN
-    // class NameForm extends React.Component {
-    //     constructor(props) {
-    //         super(props);
-    //         this.state = {value: ''};
-    
-    //         this.handleInputChange = this.handleInputChange.bind(this);
-    //         this.handleSubmit = this.handleSubmit.bind(this);
-    
-    //     }
-
-    // };
-
-    
-    //TEST OVAN
     const handleSubmit = (e) => {
         e.preventDefault();
         if(!todo_task) {
@@ -72,7 +56,7 @@ const AddEdit = () => {
                   }
         
 }
-            setTimeout(() => navigate('/'), 500);
+            setTimeout(() => navigate('/todo'), 500);
         }
     // };
 
