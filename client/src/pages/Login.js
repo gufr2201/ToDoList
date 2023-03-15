@@ -23,7 +23,7 @@ const Login = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!username || !password) {
-          toast.error('Var snäll och fyll i fälten för att registrera dig.')
+          toast.error('Var snäll och fyll i fälten för att logga in.')
         } else {
           axios.post('http://localhost:5000/authentication/login', {
             username: username, 

@@ -22,10 +22,13 @@ const Register = () => {
             password: passwordReg
           }).then((response)=> {
             console.log(response)
+            toast.success('Du har registrerat dig!');
+            setTimeout(() => navigate('/'), 500);
           })
-          .catch((err) => toast.error(err.response.data));
-          toast.success('Du har registrerat dig!');
-          setTimeout(() => navigate('/'), 500);
+          .catch((err) =>
+           {
+            toast.error(err.response.data)
+          });
         }
       };
       

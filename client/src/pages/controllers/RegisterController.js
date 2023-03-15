@@ -1,9 +1,15 @@
+
 const express = require('express');
 const server = express();
 require('dotenv').config();
 const mysql = require('mysql2');
 const joi = require('joi');
 const cors = require('cors');
+// import { ToastContainer } from 'react-toastify';
+// import { toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
+
+
 server.use(cors());
 
 server.use(express.json());
@@ -17,15 +23,32 @@ const db = mysql.createPool({
 
 
 
+
 exports.register = function register(req, res) {
     const {username, password} = req.body;
+    const schema = joi.object({
+        username: joi.string().min(4).max(20).required(),
+        password: joi.string().min(4).max(20).required(),
+      });
+      const validation = schema.validate({username: username, password: password});
+      if (!validation.error) 
+          {
+            const sqlInsert = 'INSERT INTO user_info (username, password) VALUES (?, ?)'
+            db.query(sqlInsert, [username, password], (error, result) => {
+                if (error) {
+                    res.status(403).json('Du måste ange minst 4 tecken i både användarnamn och lösenord');
 
-    const sqlInsert = 'INSERT INTO user_info (username, password) VALUES (?, ?)'
-    db.query(sqlInsert, [username, password], (error, result) => {
-        if (error) {
-            console.log(error);
-        }
-    })
+                }
+            }) 
+      
+      } else {
+        res.status(201).json('Du har registrerat en användare');
+
+            //   toast.error('Var snäll och fyll i fältet innan du sparar.')
+                
+      }
+
+  
 };
 
 

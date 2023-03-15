@@ -62,33 +62,47 @@ server.post('/api/post', (req, res) => {
 //     })
 // })
 
+//kolla om jag kan göra en middleware som kontrollerar om användaren har en authToken för att logga in. 
 server.get('/api/get', (req, res) => {
     const {authToken} = req.cookies;
     const schema = joi.object({
         todo_task: joi.string()
     });
-console.log(authToken);
-console.log(req)
+// console.log(authToken);
+// console.log(req)
     const validation = schema.validate(req.query);
-//kolla om jag kan göra en middleware som kontrollerar om användaren har en authToken för att logga in. 
-    const sqlGet = "SELECT * FROM todo";
-    db.query(sqlGet, (error, result) => {
-        if(validation.error) {
-            console.log(error);
-            res.sendStatus(500);
-            //TODO skriv res.sendStatus(500 eller den felkod som gäller)
-        }else {
-        res.status(200).json(result); // ändrade från res.send(result) till res.json(result);
-        }
-    })
+    if(validation.error) {
+        console.log(error);
+        res.sendStatus(500);
+        
+    } else {
+        const decodedToken = jwt.verify(authToken, process.env.JWT_SECRET);
+        const username = decodedToken.username;
+        const sqlGet = 'SELECT todo.id, todo.todo_task, user_info.username FROM todo INNER JOIN user_info ON todo.username = user_info.username WHERE todo.username = ?';
+        db.query(sqlGet, [username], (error, result) => {
+            if(error) {
+                console.log(error);
+                res.sendStatus(500);
+            } else {
+                res.status(200).json(result);
+            }
+        });
+
+    }
+    // const sqlGet = "SELECT * FROM todo";
+    
 });
 
 server.post('/api/post', (req, res) => {
     const {todo_task} = req.body;
-    const sqlInsert = "INSERT INTO todo (todo_task) VALUES (?)";
-    db.query(sqlInsert, [todo_task], (error, result) => {
+    const sqlInsert = "INSERT INTO todo (todo_task, username) VALUES (?)";
+    db.query(sqlInsert, [todo_task, username], (error, result) => {
         if (error) {
             console.log(error);
+            res.status(500).json('Serverfel');
+        } else {
+            res.status(500).json('Du har lagt till en aktivtet till din att göra-lista');
+
         }
     });
 });

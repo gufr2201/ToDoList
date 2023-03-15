@@ -21,27 +21,58 @@ const db = mysql.createPool({
 exports.login = function (req, res) {
     const {username, password} = req.body;
     const secret = process.env.SECRET;
-    const sqlInsert = 'SELECT * FROM user_info where username = ? AND password = ?'
+    const sqlInsert = 'SELECT * FROM user_info where username = ? AND password = ?';
+    
+    const schema = joi.object({
+        username: joi.string().min(4).max(20).required(),
+        password: joi.string().min(4).max(20).required(),
+      });
+      const validation = schema.validate({username: username, password: password});
+      if (!validation.error) 
+          {
+            db.query(sqlInsert, [username, password], (error, result) => {
+                        if (error) {
+                            res.send({error: error})
+                            return;
+                        } 
+                            if(result.length > 0) {
+                                const authToken = jwt.sign({username}, secret, {expiresIn: 120});
+                                res.cookie('authToken', authToken, {
+                                    maxAge: 360000,
+                                    sameSite: 'none',
+                                    secure: true,
+                                    httpOnly: false
+                                }); 
+                console.log(authToken);
+      
+        res.status(200).json('Du loggades in');
+                    } else {
+                        res.status(401).json('Du har angett fel användarnamn eller lösenord')
+                        // res.send({message: 'Du har angett fel användarnamn eller lösenord'})
+                    }
 
-    db.query(sqlInsert, [username, password], (error, result) => {
-        if (error) {
-            res.send({error: error})
-            return;
-        } 
-            if(result.length > 0) {
-                const authToken = jwt.sign({username}, secret, {expiresIn: 120});
-                res.cookie('authToken', authToken, {
-                    maxAge: 360000,
-                    sameSite: 'none',
-                    secure: true,
-                    httpOnly: false
-                }); 
-console.log(authToken);
+                
+      }
+//     db.query(sqlInsert, [username, password], (error, result) => {
+//         if (error) {
+//             res.send({error: error})
+//             return;
+//         } 
+//             if(result.length > 0) {
+//                 const authToken = jwt.sign({username}, secret, {expiresIn: 120});
+//                 res.cookie('authToken', authToken, {
+//                     maxAge: 360000,
+//                     sameSite: 'none',
+//                     secure: true,
+//                     httpOnly: false
+//                 }); 
+// console.log(authToken);
 
-                    res.status(200).json('Login successful');
-            } else {
-                res.send({message: 'Du har angett fel användarnamn eller lösenord'})
-            }
+//                     res.status(200).json('Du loggades in');
+//             } else {
+//                 res.status(401).json('Du har angett fel användarnamn eller lösenord')
+//                 // res.send({message: 'Du har angett fel användarnamn eller lösenord'})
+//             }
             
         
         // if (result.length > 0) {
@@ -51,5 +82,5 @@ console.log(authToken);
             //     res.send({message: 'Du har angett fel användarnamn eller lösenord'})
             // }
         
-    })
+    )}
 };

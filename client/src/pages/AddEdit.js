@@ -11,7 +11,7 @@ const initialState = {
 const AddEdit = () => {
     const [state, setState] = useState(initialState);
     
-    const {todo_task} = state;
+    const {todo_task, username} = state;
 
     const navigate = useNavigate();
 
@@ -38,7 +38,8 @@ const AddEdit = () => {
             //Om aktiviteten inte har id är det en ny aktivitet som skapas.
            if (!id) { 
             axios.post('http://localhost:5000/api/post', {
-                todo_task
+                todo_task,
+                username
             }).then(() => {
                 setState({todo_task: ''});
             })
