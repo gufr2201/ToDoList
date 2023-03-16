@@ -26,28 +26,31 @@ const db = mysql.createPool({
 
 exports.register = function register(req, res) {
     const {username, password} = req.body;
+    const sqlInsert = 'INSERT INTO user_info (username, password) VALUES (?, ?)'
     const schema = joi.object({
         username: joi.string().min(4).max(20).required(),
         password: joi.string().min(4).max(20).required(),
-      });
-      const validation = schema.validate({username: username, password: password});
-      if (!validation.error) 
-          {
-            const sqlInsert = 'INSERT INTO user_info (username, password) VALUES (?, ?)'
+    });
+    const validation = schema.validate({username: username, password: password});
+    if (!validation.error) 
+    {
             db.query(sqlInsert, [username, password], (error, result) => {
                 if (error) {
-                    res.status(403).json('Du måste ange minst 4 tecken i både användarnamn och lösenord');
+                    // res.status(403).json('Du måste ange minst 4 tecken i både användarnamn och lösenord');
 
-                }
-            }) 
-      
-      } else {
-        res.status(201).json('Du har registrerat en användare');
-
-            //   toast.error('Var snäll och fyll i fältet innan du sparar.')
+                         res.status(500).json('Internal Server Error');
+                         return;
+                } else 
+                {
+                  res.status(201).json('Du har registrerat en användare');
                 
-      }
-
+                }
+            
+       }
+       )}
+       if(validation.error) {
+        res.status(400).json('Både användarnamn och lösenord måste vara minst fyra tecken långt.') // denna visas ej
+       }
   
 };
 

@@ -9,25 +9,44 @@ const ToDo = () => {
     const [data, setData] = useState([]);
     
     const loadData = async () => {
-        const response = await axios.get('http://localhost:5000/api/get');
+        const response = await axios.get('http://localhost:5000/api/get', {
+            
+                withCredentials: true
+              
+        });
         setData(response.data);
     };
     useEffect(() => {
         loadData();
     }, []);
 
-    // const navigate = useNavigate();
-
+   
 
     const deleteTodo = (id) => {
-        if(
-            window.confirm('Är du säker på att du vill ta bort aktiviteten?')
-            ) {
-            axios.delete(`http://localhost:5000/api/remove/${id}`);
-            toast.success('Aktivitet togs bort');
-            setTimeout(() => loadData(), 500);
+        if (window.confirm('Are you sure you want to delete this item?')) {
+          axios.delete(`http://localhost:5000/api/remove/${id}`)
+            .then(() => {
+              toast.success('Item deleted successfully');
+              loadData(); 
+
+            })
+            .catch((error) => {
+              console.error(error);
+              toast.error('Failed to delete item');
+            });
         }
-    };
+      };
+      
+
+    // const deleteTodo = (id) => {
+    //     if(
+    //         window.confirm('Är du säker på att du vill ta bort aktiviteten?')
+    //         ) {
+    //         axios.delete(`http://localhost:5000/api/remove/${id}`);
+    //         toast.success('Aktivitet togs bort');
+    //         setTimeout(() => loadData(), 500);
+    //     }
+    // };
 
     return (
         <div style={{marginTop: "150px"}}>
@@ -53,9 +72,9 @@ const ToDo = () => {
                                     <button className='btn btn-edit'>Redigera</button>
                                 </Link>
                                 <button className="btn btn-delete" onClick={() => deleteTodo(item.id)}>Ta bort</button>
-                                <Link to={`/view/${item.id}`}>
+                                {/* <Link to={`/view/${item.id}`}>
                                     <button className='btn btn-view'>Visa</button>
-                                </Link>
+                                </Link> */}
                             </td>
                         </tr>
                     )

@@ -20,13 +20,13 @@ const AddEdit = () => {
     // useEffect(() => {
     //     axios.patch(`http://localhost:5000/api/patch/update:${id}`).then((res) => setState({ ...res.data[0] }))
     // }, [id]);
-    useEffect(() => {
-        if (id) {
-          axios.get(`http://localhost:5000/api/get/${id}`)
-            .then(res => setState({ ...res.data[0] })) 
-            .catch(err => console.log(err));
-        }
-      }, [id]);
+    // useEffect(() => {
+    //     if (id) {
+    //       axios.get(`http://localhost:5000/api/get/${id}`)
+    //         .then(res => setState({ ...res.data[0] })) 
+    //         .catch(err => console.log(err));
+    //     }
+    //   }, [id]);
       
 
     const handleSubmit = (e) => {
@@ -40,6 +40,9 @@ const AddEdit = () => {
             axios.post('http://localhost:5000/api/post', {
                 todo_task,
                 username
+                
+            }, {
+                withCredentials: true
             }).then(() => {
                 setState({todo_task: ''});
             })

@@ -7,7 +7,7 @@ const mysql = require('mysql2');
 const joi = require('joi');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
-const { AuthenticationRoute } = require('../client/src/pages/routes/AuthenticationRoute');
+const { AuthenticationRoute } = require('./routes/AuthenticationRoute');
 //Här hämtar jag info från .env-filen för att skapa en anslutning till databasen
 const db = mysql.createPool({
     user: process.env.DATABASE_USER,
@@ -22,60 +22,26 @@ server.use(cors({
     credentials: true}
 ));
 server.use(express.json());
-server.use(bodyParser.urlencoded({extended: true}));
+// server.use(bodyParser.urlencoded({extended: true}));
 server.use(cookieParser());
 
 server.use('/authentication', AuthenticationRoute);
 
 
-server.post('/api/post', (req, res) => {
-    const {todo_task} = req.body;
-    const sqlInsert = "INSERT INTO todo (todo_task) VALUES (?)";
-    db.query(sqlInsert, [todo_task], (error, result) => {
-        if (error) {
-            console.log(error);
-        }
-    });
-});
 
-
-// server.get('/api/get', (req, res) => {
-//         const schema = joi.object({
-//         todo_task: joi.string()
-//     });
-//     const validation = schema.validate(req.query);
-
-//     if (validation.error) {
-//         res.status(400).send(validation.error.details[0].message)
-//     }
-//     const {todo_task} = validation.value;
-//     const sqlGet ='SELECT * FROM todo where todo_task=?'; 
-//     db.query(sqlGet, [todo_task], (error, result) => {
-//         if(error){
-//             res.sendStatus(500);
-//             console.log(error);
-//         } else {
-//             res.status(200).json(result);
-//             console.log(result);
-
-//         }
-//     })
-// })
-
-//kolla om jag kan göra en middleware som kontrollerar om användaren har en authToken för att logga in. 
 server.get('/api/get', (req, res) => {
     const {authToken} = req.cookies;
+
     const schema = joi.object({
         todo_task: joi.string()
     });
-// console.log(authToken);
-// console.log(req)
     const validation = schema.validate(req.query);
     if(validation.error) {
         console.log(error);
         res.sendStatus(500);
         
     } else {
+        console.log(authToken, process.env.JWT_SECRET);
         const decodedToken = jwt.verify(authToken, process.env.JWT_SECRET);
         const username = decodedToken.username;
         const sqlGet = 'SELECT todo.id, todo.todo_task, user_info.username FROM todo INNER JOIN user_info ON todo.username = user_info.username WHERE todo.username = ?';
@@ -89,22 +55,44 @@ server.get('/api/get', (req, res) => {
         });
 
     }
-    // const sqlGet = "SELECT * FROM todo";
     
 });
 
-server.post('/api/post', (req, res) => {
-    const {todo_task} = req.body;
-    const sqlInsert = "INSERT INTO todo (todo_task, username) VALUES (?)";
-    db.query(sqlInsert, [todo_task, username], (error, result) => {
-        if (error) {
-            console.log(error);
-            res.status(500).json('Serverfel');
-        } else {
-            res.status(500).json('Du har lagt till en aktivtet till din att göra-lista');
 
-        }
+server.post('/api/post', (req, res) => {
+   
+    const {authToken} = req.cookies;
+    const {todo_task} = req.body;
+    const schema = joi.object({
+        todo_task: joi.string().required()
     });
+
+    if(!todo_task || todo_task.trim() === '') {
+
+        res.status(400).json('Du måste fylla i textfältet');
+        return;
+    }
+    const validation = schema.validate(req.body);
+    if(validation.error) {
+        console.log(validation.error);
+        res.sendStatus(400);
+        return;
+    }
+    else {
+        const decodedToken = jwt.verify(authToken, process.env.JWT_SECRET);
+        const username = decodedToken.username;
+        const sqlInsert = "INSERT INTO todo (todo_task, username) VALUES (?, ?)";
+        
+        db.query(sqlInsert, [todo_task, username], (error, result) => {
+            if (error) {
+                console.log(error);
+                res.status(500).json('Serverfel');
+            } else {
+                res.status(201).json('Du har lagt till en aktivitet till din att göra-lista');
+    
+            }
+        });
+    }
 });
 
 server.delete('/api/remove/:id', (req, res) => {
@@ -114,7 +102,7 @@ server.delete('/api/remove/:id', (req, res) => {
         if (error) {
             console.log(error);
         }
-        //TODO Här border det vara en res.sendStatus(200 eller något). Kör detta på varje del
+       res.sendStatus(200);
     });
 });
 
