@@ -37,7 +37,7 @@ const AddEdit = () => {
         else{
             //Om aktiviteten inte har id är det en ny aktivitet som skapas.
            if (!id) { 
-            axios.post('http://localhost:5000/api/post', {
+            axios.post('http://localhost:5000/todo/api/post', {
                 todo_task,
                 username
                 
@@ -50,7 +50,7 @@ const AddEdit = () => {
             toast.success('Du har lagt till något att göra!');
         } else {
             //Om aktiviteten har ett id så uppdateras den.
-            axios.patch(`http://localhost:5000/api/update/${id}`, { todo_task })
+            axios.patch(`http://localhost:5000/todo/api/update/${id}`, { todo_task })
     .then(() => {
         setState({todo_task: ''});
     })
@@ -92,8 +92,8 @@ const AddEdit = () => {
             onChange={handleInputChange} 
             />
         
-            <input type='submit' value={id ? 'Uppdatera' : 'Spara'} />
-              <Link to='/addTodo'>
+            <input type='submit' value={id ? 'Uppdatera existerande aktivitet' : 'Spara ny aktivitet'} />
+              <Link to='/todo'>
                 <input type='button' value='Gå tillbaka'/>
               </Link>      
 

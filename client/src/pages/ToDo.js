@@ -9,7 +9,7 @@ const ToDo = () => {
     const [data, setData] = useState([]);
     
     const loadData = async () => {
-        const response = await axios.get('http://localhost:5000/api/get', {
+        const response = await axios.get('http://localhost:5000/todo/api/get', {
             
                 withCredentials: true
               
@@ -24,7 +24,7 @@ const ToDo = () => {
 
     const deleteTodo = (id) => {
         if (window.confirm('Are you sure you want to delete this item?')) {
-          axios.delete(`http://localhost:5000/api/remove/${id}`)
+          axios.delete(`http://localhost:5000/todo/api/remove/${id}`)
             .then(() => {
               toast.success('Item deleted successfully');
               loadData(); 

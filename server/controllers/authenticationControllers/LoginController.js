@@ -1,14 +1,14 @@
 const express = require('express');
-const server = express();
+// const server = express();
 require('dotenv').config();
 const mysql = require('mysql2');
 const joi = require('joi');
-const cors = require('cors');
+// const cors = require('cors');
 const jwt = require('jsonwebtoken');
 
-server.use(cors());
+// server.use(cors());
 
-server.use(express.json());
+// server.use(express.json());
 
 const db = mysql.createPool({
     user: process.env.DATABASE_USER,
@@ -27,11 +27,14 @@ exports.login = function (req, res) {
         password: joi.string().min(4).max(20).required(),
       });
       const validation = schema.validate({username: username, password: password});
-      if (!validation.error) 
+      if (validation.error) {
+        console.log(error)
+          res.status(401).json('Du har angett fel användarnamn eller lösenord')
+      } else
           {
             db.query(sqlInsert, [username, password], (error, result) => {
                         if (error) {
-                            res.send({error: error})
+                            res.sendStatus(500);
                             return;
                         } 
                             if(result.length > 0) {
@@ -42,14 +45,9 @@ exports.login = function (req, res) {
                                     secure: true,
                                     httpOnly: false
                                 }); 
-                // console.log(authToken);
       
         res.status(200).json('Du loggades in');
-                    } else {
-                        res.status(401).json('Du har angett fel användarnamn eller lösenord')
-                        // res.send({message: 'Du har angett fel användarnamn eller lösenord'})
-                    }
-
+                    } 
                 
       }
 
