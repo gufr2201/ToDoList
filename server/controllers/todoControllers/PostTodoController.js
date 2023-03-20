@@ -9,15 +9,15 @@ const db = mysql.createPool({
     database: process.env.DATABASE_DATABASE
 });
 
-// server.post('/api/post', 
 
+//Controller för att posta en ny aktivitet till att göra-listan.
 
 exports.postTodo = function (req, res) {
    
     const {authToken} = req.cookies;
     const {todo_task} = req.body;
     const schema = joi.object({
-        todo_task: joi.string().required()
+        todo_task: joi.string().min(1).required()
     });
 
     if(!todo_task || todo_task.trim() === '') {

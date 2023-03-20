@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {useNavigate ,useParams, Link} from 'react-router-dom';
 import './styles/AddEdit.component.scss';
 import axios from 'axios';
@@ -15,19 +15,7 @@ const AddEdit = () => {
 
     const navigate = useNavigate();
 
-    const { id } = useParams();
-
-    // useEffect(() => {
-    //     axios.patch(`http://localhost:5000/api/patch/update:${id}`).then((res) => setState({ ...res.data[0] }))
-    // }, [id]);
-    // useEffect(() => {
-    //     if (id) {
-    //       axios.get(`http://localhost:5000/api/get/${id}`)
-    //         .then(res => setState({ ...res.data[0] })) 
-    //         .catch(err => console.log(err));
-    //     }
-    //   }, [id]);
-      
+    const { id } = useParams();   
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -46,23 +34,21 @@ const AddEdit = () => {
             }).then(() => {
                 setState({todo_task: ''});
             })
-            .catch((err) => toast.error(err.response.data));
-            toast.success('Du har lagt till något att göra!');
+           
         } else {
             //Om aktiviteten har ett id så uppdateras den.
             axios.patch(`http://localhost:5000/todo/api/update/${id}`, { todo_task })
     .then(() => {
         setState({todo_task: ''});
     })
-    .catch((err) => toast.error(err.response.data));
-    toast.success('Du har nu uppdaterat aktiviteten');
- 
-                  }
-        
+  
+    
 }
-            setTimeout(() => navigate('/todo'), 500);
+
+setTimeout(() => navigate('/todo'), 500);
+
         }
-    // };
+    };
 
     const handleInputChange = (e) => {
         const {name, value} = e.target;
@@ -86,8 +72,6 @@ const AddEdit = () => {
             id='todo_task' 
             name='todo_task' 
             placeholder='Vad har du att göra?'
-            // defaultValue={todo} 
-            //value gör att det inte går att skriva i textrutan. defalultValue går att skriva men tolkas som att inget skrivits och felmeddelande om att man måste fylla i rutan kommer upp
             value={todo_task || ''}
             onChange={handleInputChange} 
             />

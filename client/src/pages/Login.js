@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {useNavigate ,useParams, Link} from 'react-router-dom';
+import React, {useState} from 'react';
+import {useNavigate , Link} from 'react-router-dom';
 import './styles/AddEdit.component.scss';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -24,10 +24,18 @@ const Login = () => {
           },{
             withCredentials: true
           }).then((response)=> {
-            console.log(response)
-           navigate('/todo');
-          })
-          .catch((err) => toast.error(err.response.data));
+            if(response && response.data) {
+              console.log(response);
+             navigate('/todo');
+            }  else {
+              throw new Error('Invalid response from server');
+            }
+          }).catch((err) => {
+
+            console.error(err);
+            console.error(err.response);
+            
+          });
        
         }
       };
@@ -63,7 +71,6 @@ return (
                 onChange={(e)=> {setPassword(e.target.value)}} 
                 
                 />
-                {/* <button onClick={register}></button> */}
                 <input type='submit' value={'Logga in'} />
                   <Link to='/register'>
                     <input type='button' value='Registrera dig'/>

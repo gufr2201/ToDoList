@@ -7,8 +7,7 @@ const db = mysql.createPool({
     database: process.env.DATABASE_DATABASE
 });
 
-
-// server.delete('/api/remove/:id', 
+//Controller för att ta bort en aktivitet från att göra-listan.
 
 exports.deleteTodo = function(req, res) {
     const { id } = req.params;
@@ -17,18 +16,9 @@ exports.deleteTodo = function(req, res) {
         if (error) {
             console.log(error);
         } else {
-            res.sendStatus(200);
+            res.status(200).json('Du har tagit bort en aktivitet');
+
         }
     });
 };
 
-// server.get('/api/get:id', (req, res) => {
-//     const { id } = req.params;
-//     const sqlGet = "SELECT * FROM todo where id = ?";
-//     db.query(sqlGet, [id], (error, result) => {
-//         if(error) {
-//             console.log(error);
-//         }
-//         res.send(result);
-//     });
-// });

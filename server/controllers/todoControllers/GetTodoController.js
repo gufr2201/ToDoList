@@ -1,7 +1,7 @@
 const joi = require('joi');
 const jwt = require('jsonwebtoken');
 const mysql = require('mysql2');
-const {authMiddleware} = require('../../middlewares/AuthMiddleware')
+
 const db = mysql.createPool({
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
@@ -11,8 +11,8 @@ const db = mysql.createPool({
 
 
 
+//Controller för att hämta alla aktiviteter den inloggade användaren har på sin att göra-listan.
 
-// server.get('/api/get', 
 exports.getTodo = function getTodo(req, res) {
     const {authToken} = req.cookies;
     const decodedToken = jwt.verify(authToken, process.env.JWT_SECRET);

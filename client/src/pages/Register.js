@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {useNavigate ,useParams, Link} from 'react-router-dom';
+import React, {useState} from 'react';
+import {useNavigate, Link} from 'react-router-dom';
 import './styles/AddEdit.component.scss';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -65,8 +65,6 @@ return (
                 
                 />
                 <button type='submit'>Registrera</button>
-                {/* <button onClick={register}>Registrera</button> */}
-                {/* <input type='submit' value={'Registrera'}/> */}
                   <Link to='/'>
                     <input type='button' value='Gå till login sidan'/>
                   </Link>      

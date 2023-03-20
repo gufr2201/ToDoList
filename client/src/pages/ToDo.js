@@ -38,15 +38,7 @@ const ToDo = () => {
       };
       
 
-    // const deleteTodo = (id) => {
-    //     if(
-    //         window.confirm('Är du säker på att du vill ta bort aktiviteten?')
-    //         ) {
-    //         axios.delete(`http://localhost:5000/api/remove/${id}`);
-    //         toast.success('Aktivitet togs bort');
-    //         setTimeout(() => loadData(), 500);
-    //     }
-    // };
+ 
 
     return (
         <div style={{marginTop: "150px"}}>
@@ -72,9 +64,7 @@ const ToDo = () => {
                                     <button className='btn btn-edit'>Redigera</button>
                                 </Link>
                                 <button className="btn btn-delete" onClick={() => deleteTodo(item.id)}>Ta bort</button>
-                                {/* <Link to={`/view/${item.id}`}>
-                                    <button className='btn btn-view'>Visa</button>
-                                </Link> */}
+                            
                             </td>
                         </tr>
                     )
