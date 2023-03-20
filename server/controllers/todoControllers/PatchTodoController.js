@@ -37,7 +37,6 @@ exports.patchTodo = function(req, res)  {
 
             } else 
               {
-                res.send(result);
                 res.status(200).json('Du har ändrat en aktivitet.');
 
               }
