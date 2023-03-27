@@ -50,7 +50,7 @@ const ToDo = () => {
                 <tr>
                     <th style={{textAlign: "center"}}>Nummer</th>
                     <th style={{textAlign: "center"}}>Att göra</th>
-                    <th style={{textAlign: "center"}}>Action</th>
+                    <th style={{textAlign: "center"}}></th>
                 </tr>
             </thead>
             <tbody>

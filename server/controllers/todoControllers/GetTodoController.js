@@ -1,4 +1,3 @@
-const joi = require('joi');
 const jwt = require('jsonwebtoken');
 const mysql = require('mysql2');
 
@@ -18,15 +17,7 @@ exports.getTodo = function getTodo(req, res) {
     const decodedToken = jwt.verify(authToken, process.env.JWT_SECRET);
     const username = decodedToken.username;
     const sqlGet = 'SELECT todo.id, todo.todo_task, user_info.username FROM todo INNER JOIN user_info ON todo.username = user_info.username WHERE todo.username = ?';
-    const schema = joi.object({
-        todo_task: joi.string()
-    });
-    const validation = schema.validate(req.query);
-    if(validation.error) {
-        console.log(validation.error);
-        res.sendStatus(500);
-        
-    } else {
+   
         db.query(sqlGet, [username], (error, result) => {
             if(error) {
                 console.log(error);
@@ -36,6 +27,6 @@ exports.getTodo = function getTodo(req, res) {
             }
         });
 
-    }
+    
     
 };
