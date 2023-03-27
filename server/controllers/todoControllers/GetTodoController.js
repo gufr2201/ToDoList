@@ -23,7 +23,7 @@ exports.getTodo = function getTodo(req, res) {
     });
     const validation = schema.validate(req.query);
     if(validation.error) {
-        console.log(error);
+        console.log(validation.error);
         res.sendStatus(500);
         
     } else {

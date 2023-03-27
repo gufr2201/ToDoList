@@ -22,7 +22,7 @@ exports.login = function (req, res) {
       });
       const validation = schema.validate({username: username, password: password});
       if (validation.error) {
-        console.log(error)
+        console.log(validation.error)
           res.status(401).json('Du har angett fel användarnamn eller lösenord')
       } else
           {

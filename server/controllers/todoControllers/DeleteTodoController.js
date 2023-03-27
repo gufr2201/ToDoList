@@ -1,3 +1,4 @@
+const joi = require('joi');
 const mysql = require('mysql2');
 
 const db = mysql.createPool({
@@ -12,13 +13,24 @@ const db = mysql.createPool({
 exports.deleteTodo = function(req, res) {
     const { id } = req.params;
     const sqlRemove = "DELETE FROM todo WHERE id = ?";
-    db.query(sqlRemove, [id], (error, result) => {
-        if (error) {
-            console.log(error);
-        } else {
-            res.status(200).json('Du har tagit bort en aktivitet');
-
-        }
+    const schema = joi.object({
+        todo_task:joi.string()
     });
+    const validation = schema.validate(req.body);
+    if (validation.error) {
+        console.log(validation.error);
+        res.sendStatus(500);
+    } else {
+        db.query(sqlRemove, [id], (error, result) => {
+            if (error) {
+                console.log(error);
+            } else {
+                res.status(200).json('Du har tagit bort en aktivitet');
+    
+            }
+        });
+        
+    }
+
 };
 
